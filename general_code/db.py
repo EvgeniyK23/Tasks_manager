@@ -1,5 +1,6 @@
 import sqlite3
 
+
 class DataBase:
 
     def __init__(self, db="tasks_manager.db"):
@@ -17,8 +18,10 @@ class DataBase:
         self.conn.commit()
         print('DataBase created\nСоединение восстановлено')
 
-
     def get_all(self):
+        """Функция выводит всех задачи.
+        Returns: Возвращает список всех задач.
+        """
         try:
             self.cur.execute("SELECT * FROM Tasks")
             rows = self.cur.fetchall()
@@ -26,8 +29,9 @@ class DataBase:
         except Exception as ex:
             print(f"Ошибка {ex}")
 
-    def add_task(self, fullname, name, descript, priority, deadline):
-        if all([name.isalpha(), descript.isalpha(), priority.isdigit(), deadline.isalpha()]):
+    def add_task(self, fullname: str, name: str, descript: str, priority: int, deadline: int):
+        if all([name.isalpha(), descript.isalpha(), priority.isdigit(),
+                deadline.isalpha()]):
             raise ValueError("Некорректные данные")
         try:
             self.cur.execute(
@@ -38,7 +42,7 @@ class DataBase:
         except Exception as ex:
             print(f"Ошибка {ex}")
 
-    def delete(self, i_d):
+    def delete(self, i_d: int):
         try:
             self.cur.execute("DELETE FROM Tasks WHERE i_d=?", (i_d,))
             self.conn.commit()
@@ -64,7 +68,8 @@ class DataBase:
 
     def search_fullname(self, fullname="", deadline=''):
         try:
-            self.cur.execute("SELECT * FROM Tasks WHERE fullname=?", (fullname,))
+            self.cur.execute("SELECT * FROM Tasks WHERE fullname=?",
+                             (fullname,))
             rows = self.cur.fetchall()
             return rows
         except Exception as ex:
@@ -72,7 +77,8 @@ class DataBase:
 
     def search_deadline(self, deadline=''):
         try:
-            self.cur.execute("SELECT * FROM Tasks WHERE deadline=?", (deadline,))
+            self.cur.execute("SELECT * FROM Tasks WHERE deadline=?",
+                             (deadline,))
             rows = self.cur.fetchall()
             return rows
         except Exception as ex:
@@ -102,14 +108,13 @@ class DataBase:
         except Exception as ex:
             print(f"Ошибка {ex}")
 
-if __name__=="__main__":
 
+if __name__ == "__main__":
     d_b = DataBase()
 
-    print(*d_b.get_all(), sep = '\n')
+    print(*d_b.get_all(), sep='\n')
     print()
-    print(*d_b.sort_fullname(), sep = '\n')
+    print(*d_b.sort_fullname(), sep='\n')
 
     print()
     print(*d_b.search_fullname('A'), sep='\n')
-

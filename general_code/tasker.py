@@ -7,11 +7,122 @@
 
 import sys
 from PyQt6 import QtCore, QtGui, QtWidgets
-from db import DataBase
+# from db import DataBase
+import sqlite3
+
+class DataBase:
+
+    def __init__(self, db="tasks_manager.db"):
+        db = db
+        self.conn = sqlite3.connect(db)
+        self.cur = self.conn.cursor()
+        self.cur.execute(
+            "CREATE TABLE IF NOT EXISTS Tasks "
+            "(i_d INTEGER PRIMARY KEY  AUTOINCREMENT, "
+            "fullname TEXT, "
+            "name TEXT, "
+            "descript TEXT, "
+            "priority INTEGER,"
+            "deadline TEXT)")
+        self.conn.commit()
+        print('DataBase created\nСоединение восстановлено')
+
+    def get_all(self):
+        """Функция выводит всех задачи.
+        Returns: Возвращает список всех задач.
+        """
+        try:
+            self.cur.execute("SELECT * FROM Tasks")
+            rows = self.cur.fetchall()
+            return rows
+        except Exception as ex:
+            print(f"Ошибка {ex}")
+
+    def add_task(self, fullname: str, name: str, descript: str, priority: int, deadline: int):
+        if all([name.isalpha(), descript.isalpha(), priority.isdigit(),
+                deadline.isalpha()]):
+            raise ValueError("Некорректные данные")
+        try:
+            self.cur.execute(
+                """INSERT INTO Tasks
+        (fullname, name, descript, priority, deadline) VALUES (?, ?, ?, ?, ?)""",
+                (fullname, name, descript, priority, deadline))
+            self.conn.commit()
+        except Exception as ex:
+            print(f"Ошибка {ex}")
+
+    def delete(self, i_d: int):
+        try:
+            self.cur.execute("DELETE FROM Tasks WHERE i_d=?", (i_d,))
+            self.conn.commit()
+        except Exception as ex:
+            print(f"Ошибка {ex}")
+
+    def delete_all(self):
+        try:
+            self.cur.execute("DROP TABLE IF EXISTS Tasks")
+            self.conn.commit()
+            self.conn.close()
+            print('Соединение разорвал')
+        except Exception as ex:
+            print(f"Ошибка {ex}")
+
+    def search_name(self, name=""):
+        try:
+            self.cur.execute("SELECT * FROM Tasks WHERE name=?", (name,))
+            rows = self.cur.fetchall()
+            return rows
+        except Exception as ex:
+            print(f"Ошибка {ex}")
+
+    def search_fullname(self, fullname="", deadline=''):
+        try:
+            self.cur.execute("SELECT * FROM Tasks WHERE fullname=?",
+                             (fullname,))
+            rows = self.cur.fetchall()
+            return rows
+        except Exception as ex:
+            print(f"Ошибка {ex}")
+
+    def search_deadline(self, deadline=''):
+        try:
+            self.cur.execute("SELECT * FROM Tasks WHERE deadline=?",
+                             (deadline,))
+            rows = self.cur.fetchall()
+            return rows
+        except Exception as ex:
+            print(f"Ошибка {ex}")
+
+    def sort_name(self):
+        try:
+            self.cur.execute("SELECT * FROM Tasks ORDER BY name")
+            rows = self.cur.fetchall()
+            return rows
+        except Exception as ex:
+            print(f"Ошибка {ex}")
+
+    def sort_fullname(self):
+        try:
+            self.cur.execute("SELECT * FROM Tasks ORDER BY fullname DESC")
+            rows = self.cur.fetchall()
+            return rows
+        except Exception as ex:
+            print(f"Ошибка {ex}")
+
+    def sort_deadline(self):
+        try:
+            self.cur.execute("SELECT * FROM Tasks ORDER BY deadline")
+            rows = self.cur.fetchall()
+            return rows
+        except Exception as ex:
+            print(f"Ошибка {ex}")
 
 
 class Ui_Tasker(object):
     def setupUi(self, Tasker):
+        """Файл создан с помощью QT Designer и вручную дописаны собственные
+        функции.
+        """
         Tasker.setObjectName("Tasker")
         Tasker.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(parent=Tasker)
@@ -216,7 +327,8 @@ class Ui_Tasker(object):
         self.search_deadline_in.setText(_translate("Tasker", ""))
 
     def add_functions(self):
-
+        """Функция обрабатывает взаимодействие с интерфейсом.
+        """
         self.add_task.clicked.connect(
             lambda: self.write_tasks(
                 self.fullname_in.text(),
@@ -243,6 +355,15 @@ class Ui_Tasker(object):
             lambda: self.search_deadline_b(self.search_deadline_in.text()))
 
     def write_tasks(self, fn, n, d, p, dl):
+        """Функция записывает новую задачу в БД.
+
+        Args:
+            fn: ФИО пользователя.
+            n: Название задачи.
+            d: Описание задачи.
+            p: Приоритет задачи.
+            dl: Срок выполнения задачи.
+        """
         self.d_b.add_task(fn, n, d, p, dl)
         self.fullname_in.setText('')
         self.name_in.setText('')
