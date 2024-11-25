@@ -14,9 +14,10 @@ class DataBase:
             "name TEXT, "
             "descript TEXT, "
             "priority INTEGER,"
-            "deadline TEXT)")
+            "deadline TEXT)"
+        )
         self.conn.commit()
-        print('DataBase created\nСоединение восстановлено')
+        print("DataBase created\nСоединение восстановлено")
 
     def get_all(self):
         """Функция выводит всех задачи.
@@ -29,22 +30,29 @@ class DataBase:
         except Exception as ex:
             print(f"Ошибка {ex}")
 
-    def add_task(self, fullname: str, name: str, descript: str, priority: int, deadline: int):
-        if all([name.isalpha(), descript.isalpha(), priority.isdigit(),
-                deadline.isalpha()]):
+    def add_task(
+        self, fullname: str, name: str, descript: str,
+            priority: int, deadline: int
+    ):
+        if all(
+            [name.isalpha(), descript.isalpha(),
+             priority.isdigit(), deadline.isalpha()]
+        ):
             raise ValueError("Некорректные данные")
         try:
             self.cur.execute(
-                """INSERT INTO Tasks
-        (fullname, name, descript, priority, deadline) VALUES (?, ?, ?, ?, ?)""",
-                (fullname, name, descript, priority, deadline))
+                "INSERT INTO Tasks (fullname, name, "
+                "descript, priority, deadline) VALUES (?, ?, ?, ?, ?)",
+                (fullname, name, descript, priority, deadline),
+            )
             self.conn.commit()
         except Exception as ex:
             print(f"Ошибка {ex}")
 
     def delete(self, i_d: int):
         try:
-            self.cur.execute("DELETE FROM Tasks WHERE i_d=?", (i_d,))
+            self.cur.execute("DELETE FROM Tasks WHERE i_d=?",
+                             (i_d,))
             self.conn.commit()
         except Exception as ex:
             print(f"Ошибка {ex}")
@@ -54,19 +62,20 @@ class DataBase:
             self.cur.execute("DROP TABLE IF EXISTS Tasks")
             self.conn.commit()
             self.conn.close()
-            print('Соединение разорвал')
+            print("Соединение разорвал")
         except Exception as ex:
             print(f"Ошибка {ex}")
 
     def search_name(self, name=""):
         try:
-            self.cur.execute("SELECT * FROM Tasks WHERE name=?", (name,))
+            self.cur.execute("SELECT * FROM Tasks WHERE name=?",
+                             (name,))
             rows = self.cur.fetchall()
             return rows
         except Exception as ex:
             print(f"Ошибка {ex}")
 
-    def search_fullname(self, fullname="", deadline=''):
+    def search_fullname(self, fullname="", deadline=""):
         try:
             self.cur.execute("SELECT * FROM Tasks WHERE fullname=?",
                              (fullname,))
@@ -75,7 +84,7 @@ class DataBase:
         except Exception as ex:
             print(f"Ошибка {ex}")
 
-    def search_deadline(self, deadline=''):
+    def search_deadline(self, deadline=""):
         try:
             self.cur.execute("SELECT * FROM Tasks WHERE deadline=?",
                              (deadline,))
@@ -112,9 +121,9 @@ class DataBase:
 if __name__ == "__main__":
     d_b = DataBase()
 
-    print(*d_b.get_all(), sep='\n')
+    print(*d_b.get_all(), sep="\n")
     print()
-    print(*d_b.sort_fullname(), sep='\n')
+    print(*d_b.sort_fullname(), sep="\n")
 
     print()
-    print(*d_b.search_fullname('A'), sep='\n')
+    print(*d_b.search_fullname("A"), sep="\n")
