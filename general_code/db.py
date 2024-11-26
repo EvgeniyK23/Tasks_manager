@@ -50,6 +50,11 @@ class DataBase:
             print(f"Ошибка {ex}")
 
     def delete(self, i_d: int):
+        """Удаляет задачу по ID.
+
+        Args:
+            i_d: I_D задачи.
+        """
         try:
             self.cur.execute("DELETE FROM Tasks WHERE i_d=?",
                              (i_d,))
@@ -58,6 +63,8 @@ class DataBase:
             print(f"Ошибка {ex}")
 
     def delete_all(self):
+        """Удаляет всю БД.
+        """
         try:
             self.cur.execute("DROP TABLE IF EXISTS Tasks")
             self.conn.commit()
@@ -67,6 +74,13 @@ class DataBase:
             print(f"Ошибка {ex}")
 
     def search_name(self, name=""):
+        """Поиск задачи по названию задачи.
+
+        Args:
+            name: Название задачи.
+
+        Returns: Возвращает список из кортежей с совпавшими названиями задач.
+        """
         try:
             self.cur.execute("SELECT * FROM Tasks WHERE name=?",
                              (name,))
@@ -75,7 +89,14 @@ class DataBase:
         except Exception as ex:
             print(f"Ошибка {ex}")
 
-    def search_fullname(self, fullname="", deadline=""):
+    def search_fullname(self, fullname=""):
+        """Поиск задачи по ФИО записавшему задачу.
+
+        Args:
+            fullname: ФИО зарегистрировавшего задачу.
+
+        Returns: Возвращает список из кортежей с совпавшими ФИО.
+        """
         try:
             self.cur.execute("SELECT * FROM Tasks WHERE fullname=?",
                              (fullname,))
@@ -85,6 +106,13 @@ class DataBase:
             print(f"Ошибка {ex}")
 
     def search_deadline(self, deadline=""):
+        """Поиск задачи по сроку сдачи задачи.
+
+        Args:
+            deadline: Срок сдачи
+
+        Returns: Возвращает список из кортежей с совпавшими дедлайнами задач.
+        """
         try:
             self.cur.execute("SELECT * FROM Tasks WHERE deadline=?",
                              (deadline,))
@@ -94,6 +122,10 @@ class DataBase:
             print(f"Ошибка {ex}")
 
     def sort_name(self):
+        """Сортировка по названию задачи.
+
+        Returns: Возвращает список кортежей с сортировкой по названию задачи.
+        """
         try:
             self.cur.execute("SELECT * FROM Tasks ORDER BY name")
             rows = self.cur.fetchall()
@@ -102,6 +134,10 @@ class DataBase:
             print(f"Ошибка {ex}")
 
     def sort_fullname(self):
+        """Сортировка по ФИО записавшему задачу.
+
+        Returns: Возвращает список кортежей с сортировкой по ФИО.
+        """
         try:
             self.cur.execute("SELECT * FROM Tasks ORDER BY fullname DESC")
             rows = self.cur.fetchall()
@@ -110,6 +146,10 @@ class DataBase:
             print(f"Ошибка {ex}")
 
     def sort_deadline(self):
+        """Сортировка по сроку сдачи задачи.
+
+        Returns: Возвращает список кортежей с сортировкой по дедлайну.
+        """
         try:
             self.cur.execute("SELECT * FROM Tasks ORDER BY deadline")
             rows = self.cur.fetchall()

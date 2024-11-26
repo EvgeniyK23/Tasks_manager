@@ -293,31 +293,55 @@ class Ui_Tasker(object):
         self.deadline_in.setText("")
 
     def delete_id_b(self, i_d):
+        """Удаляет задачу по ID.
+
+        Args:
+            i_d: ID задачи.
+        """
         self.d_b.delete(i_d)
         self.delete_id_in.setText("")
 
     def get_all_tasks(self):
+        """Выводит список всех задач в БД.
+        """
         temp = ""
         for i in self.d_b.get_all():
             temp += str(i) + "\n"
         self.get_all_view.setText(str(temp))
 
     def search_fullname_b(self, fio):
+        """Поиск задачи по ФИО зарегистрировавшего.
+
+        Args:
+            fio: ФИО зарегистрировавшего.
+        """
         self.get_all_view.setText("")
         self.get_all_view.setText(str(*self.d_b.search_fullname(fio)))
         self.search_fullname_in.setText("")
 
-    def search_name_b(self, fio):
+    def search_name_b(self, name):
+        """Поиск по имени задачи.
+
+        Args:
+            name: Название задачи.
+        """
         self.get_all_view.setText("")
-        self.get_all_view.setText(str(*self.d_b.search_name(fio)))
+        self.get_all_view.setText(str(*self.d_b.search_name(name)))
         self.search_name_in.setText("")
 
-    def search_deadline_b(self, fio):
+    def search_deadline_b(self, deadline):
+        """Поиск по сроку сдачи задачи.
+
+        Args:
+            deadline: Срок сдачи.
+        """
         self.get_all_view.setText("")
-        self.get_all_view.setText(str(*self.d_b.search_deadline(fio)))
+        self.get_all_view.setText(str(*self.d_b.search_deadline(deadline)))
         self.search_deadline_in.setText("")
 
     def sort_fullname_b(self):
+        """Сортировка по ФИО.
+        """
         self.get_all_view.setText("")
         temp = ""
         for i in self.d_b.sort_fullname():
@@ -325,6 +349,8 @@ class Ui_Tasker(object):
         self.get_all_view.setText(str(temp))
 
     def sort_name_b(self):
+        """Сортировка по названию задачи.
+        """
         self.get_all_view.setText("")
         temp_n = ""
         for i in self.d_b.sort_name():
@@ -332,6 +358,8 @@ class Ui_Tasker(object):
         self.get_all_view.setText(str(temp_n))
 
     def sort_deadline_b(self):
+        """Сортировка по сроку сдачи задачи.
+        """
         self.get_all_view.setText("")
         temp = ""
         for i in self.d_b.sort_deadline():
@@ -339,6 +367,8 @@ class Ui_Tasker(object):
         self.get_all_view.setText(str(temp))
 
     def delete2(self):
+        """УДАЛЯЕТ ВСЮ БД.
+        """
         self.d_b.delete_all()
         self.get_all_view.setText("")
 
